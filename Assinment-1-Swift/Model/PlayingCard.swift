@@ -7,6 +7,11 @@
 //
 
 import Foundation
+func == (v1:Card, v2:Card) -> Bool {
+    return v1.contents.isEqual(v2.contents)
+}
+extension Card : Equatable {}
+
 
 // A class representing Playing card.
 class PlayingCard: Card {
@@ -57,7 +62,7 @@ class PlayingCard: Card {
         
         return PlayingCard.rankStrings().count-1;
     }
-    
+/*
     override func match(otherCards: [Card]) -> Int {
         var score = 0
         var numMatches = 0
@@ -93,7 +98,25 @@ class PlayingCard: Card {
         }
         return score;
     }
+*/
+//---------------------
+        override func match(otherCards: [Card]) -> Int {
+            let numCards = otherCards.count
 
+            let otherCardsP = otherCards.map({$0 as PlayingCard})
+            let scoreR = otherCardsP.reduce(0) {(var1:Int,var2:PlayingCard) -> Int in
+                if let index = find(otherCardsP, var2) {
+                    return var1 + otherCardsP[(index + 1)..<numCards].map {$0.rank  == var2.rank ?1 :0}.reduce(0) {$0  + $1}}
+                return 0 }
+            let scoreS = otherCardsP.reduce(0) {(var1:Int,var2:PlayingCard) -> Int in
+                if let index = find(otherCardsP, var2) {
+                    return var1 + otherCardsP[(index + 1)..<numCards].map {$0.suit  == var2.suit ?1 :0}.reduce(0) {$0  + $1}}
+                
+                return 0}
+            println("\(scoreR) \(scoreS)")
+            return (scoreR + scoreS)>=(numCards-1) ?(scoreR + 4 * scoreS) :0
+    }
+//---------------------
     
 }
 

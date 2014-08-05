@@ -10,14 +10,15 @@ import UIKit
 
 class CardGameViewController: UIViewController {
 
-    @IBOutlet var flipsLabel: UILabel
+    @IBOutlet var flipsLabel: UILabel?
     var flipCount: Int = 0 {
     willSet {
-               self.flipsLabel.text = "flips: " + "\(newValue)"
+
+               self.flipsLabel!.text = "flips: " + "\(newValue)"
     }
     }
 
-    @lazy var deck: Deck = self.createDeck()
+    lazy var deck: Deck = self.createDeck()
     
 
     func createDeck() ->Deck {
@@ -34,7 +35,7 @@ class CardGameViewController: UIViewController {
             sender.setTitle(nil, forState:.Normal)
         } else {
             var card: Card? = self.deck.drawRandomCard()
-            if (card){
+            if card != nil {
                 sender.setBackgroundImage(UIImage(named:"cardfront"), forState:.Normal)
                 sender.setTitle(card!.contents, forState:.Normal)
             }
@@ -45,6 +46,16 @@ class CardGameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        var pcard1:PlayingCard = PlayingCard (suit: "♠️",rank: 8)
+        var pcard2:PlayingCard = PlayingCard (suit: "♥️",rank: 8)
+        var pcard3:PlayingCard = PlayingCard (suit: "♥️",rank: 9)
+        var pcard4:PlayingCard = PlayingCard (suit: "♦️",rank: 9)
+        var pcard5:Card = Card (contents:"10♦️")
+        
+        var otherCards:[PlayingCard] = [pcard1,pcard2,pcard3]
+        let Result = pcard1.match(otherCards)
+        println("\(Result)")
+
     }
 
 }
