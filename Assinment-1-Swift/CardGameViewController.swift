@@ -30,7 +30,7 @@ class CardGameViewController: UIViewController {
         
         println("Number of cards in Deck: \(self.deck.cards.count)")
         
-        if sender.currentTitle {
+        if (sender.currentTitle != nil) {
             sender.setBackgroundImage(UIImage(named:"cardback"), forState:.Normal)
             sender.setTitle(nil, forState:.Normal)
         } else {

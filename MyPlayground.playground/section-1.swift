@@ -116,6 +116,7 @@ class PlayingCard: Card {
     }
 
 }
+
 func == (v1:Card, v2:Card) -> Bool {
     return v1.contents.isEqual(v2.contents)
 }
