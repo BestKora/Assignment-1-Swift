@@ -9,7 +9,7 @@
 import Foundation
 
 //class representing card.
-class Card{
+class Card:Printable {
     var contents: String
     var isChosen: Bool = false
     var isMatched:Bool = false
@@ -18,7 +18,7 @@ class Card{
         self.contents = contents
     }
     
-    func description() ->String
+    var description:String
     {
         return self.contents;
     }

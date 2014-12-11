@@ -101,22 +101,57 @@ class PlayingCard: Card {
 */
 //---------------------
         override func match(otherCards: [Card]) -> Int {
-            let numCards = otherCards.count
-
-            let otherCardsP = otherCards.map({$0 as PlayingCard})
-            let scoreR = otherCardsP.reduce(0) {(var1:Int,var2:PlayingCard) -> Int in
-                if let index = find(otherCardsP, var2) {
-                    return var1 + otherCardsP[(index + 1)..<numCards].map {$0.rank  == var2.rank ?1 :0}.reduce(0) {$0  + $1}}
-                return 0 }
-            let scoreS = otherCardsP.reduce(0) {(var1:Int,var2:PlayingCard) -> Int in
-                if let index = find(otherCardsP, var2) {
-                    return var1 + otherCardsP[(index + 1)..<numCards].map {$0.suit  == var2.suit ?1 :0}.reduce(0) {$0  + $1}}
-                
-                return 0}
-            println("\(scoreR) \(scoreS)")
-            return (scoreR + scoreS)>=(numCards-1) ?(scoreR + 4 * scoreS) :0
+            var aM = AccumulatorMatches()
+            let a2 = otherCards.map({$0 as PlayingCard}).pairs().map(aM.add)
+            println(" aaa2 \(a2)")
+            
+            let score = aM.result.sum>=(otherCards.count-1) ?(aM.result.sumRank + 4 * aM.result.sumSuit) :0
+            println("RESULT: \(aM.result.sumRank) \(aM.result.sumSuit) \(score)")
+            return score
+            
     }
 //---------------------
+    
+}
+class AccumulatorMatches {
+    var result:(sumRank: Int,sumSuit: Int, sum: Int) = (sumRank: 0,sumSuit: 0, sum: 0)
+    func add(pair:( PlayingCard, PlayingCard)) -> ( PlayingCard, PlayingCard){
+        switch (pair.0.suit, pair.0.rank,  pair.1.suit,  pair.1.rank){
+        case let (suit1, _, suit2,_) where suit1 == suit2:
+            result.sumSuit += 1
+            result.sum += 1
+            return pair
+        case let (_, rank1, _, rank2) where rank1 == rank2:
+            result.sumRank += 1
+            result.sum += 1
+            return pair
+        default:
+            return pair
+        }
+    }
+}
+extension Array {
+    //------- function pais ------
+    func pairs() -> [(T,T)]{
+        var pairsTuple : [(T,T)] = [(T,T)]()
+        var dr = dropFirst(self)
+        while !dr.isEmpty {
+            let dop = Zip2(self, dr)
+            pairsTuple += dop
+            dr = dropFirst(dr)
+        }
+        return pairsTuple
+    }
+    //------- function fPairs ------
+    func fPairs(  s1 : [T], acc: [(T,T)] = [(T,T)]()) -> [(T,T)] {
+        if s1.isEmpty {
+            return acc
+        }
+        else {
+            let dr = dropFirst(s1)
+            return fPairs(Array(dr),acc: acc+Zip2(self, dr))
+        }
+    }
     
 }
 

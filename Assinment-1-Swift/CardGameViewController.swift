@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class CardGameViewController: UIViewController {
 
     @IBOutlet var flipsLabel: UILabel?
@@ -52,9 +53,18 @@ class CardGameViewController: UIViewController {
         var pcard4:PlayingCard = PlayingCard (suit: "♦️",rank: 9)
         var pcard5:Card = Card (contents:"10♦️")
         
-        var otherCards:[PlayingCard] = [pcard1,pcard2,pcard3]
+        var otherCards:[PlayingCard] = [pcard1,pcard2,pcard3,pcard4]
         let Result = pcard1.match(otherCards)
         println("\(Result)")
+
+        var aM = AccumulatorMatches()
+        println("OTHERCARDS: \(otherCards)")
+        let a2 = otherCards.map({$0 as PlayingCard}).pairs().map(aM.add)
+        
+        var score = aM.result.sum>=(otherCards.count-1) ?(aM.result.sumRank + 4 * aM.result.sumSuit) :0
+        println("RESULT: \(aM.result.sumRank) \(aM.result.sumSuit) \(score)")
+
+
 
     }
 

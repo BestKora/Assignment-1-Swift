@@ -1,9 +1,51 @@
 // Playground - noun: a place where people can play
 
-import Cocoa
 import Foundation
+import Accelerate
 
 var str = "Hello, playground"
+//====
+
+enum Suit {
+    case Clubs, Diamonds, Hearts, Spades
+}
+
+enum Rank {
+    case Jack, Queen, King, Ace
+    case Num(Int)
+}
+
+struct Card1 {
+    let suit: Suit
+    let rank: Rank
+}
+
+
+/*
+- Generate an array of tuples of 2 card subsequences by zipping the hand array with itself (minus the first element)
+- Map over the array examining each pair for value-contributing combinations in a switch statement
+- Sum all resulting values
+*/
+func countHand(hand: [Card1]) -> Int {
+    return Array(Zip2(hand, dropFirst(hand))).map{(card1: Card1, card2: Card1)->Int in
+        switch (card1.suit, card1.rank, card2.rank) {
+        case (.Hearts, _, .Num(let numRank)) where numRank % 2 == 1:
+            return 2 * numRank
+        case (.Diamonds, .Num(5), .Ace):
+            return 100
+        default:
+            return 0
+        }}.reduce(0, +)
+}
+
+countHand([
+    Card1(suit:.Hearts, rank:.Num(10)),
+    Card1(suit:.Hearts, rank:.Num(6)),
+    Card1(suit:.Diamonds, rank:.Num(5)),
+    Card1(suit:.Clubs, rank:.Ace),
+    Card1(suit:.Diamonds, rank:.Jack)
+    ])
+//=====
 
 //class representing card.
 class Card{
@@ -130,6 +172,10 @@ var pcard4:PlayingCard = PlayingCard (suit: "♦️",rank: 9)
 
 var otherCards:[PlayingCard] = [pcard1,pcard2,pcard3,pcard4]
 
+
+let aaa = Array(Zip2(otherCards, dropFirst(otherCards)))
+println(" aaa \(aaa)")
+
 var arr = Array(otherCards[1...3])
 let nn = pcard1.match(arr)
 
@@ -184,6 +230,48 @@ showDoubleEnc(Double.infinity, "inf")
 showDoubleEnc(Double.NaN, "nan")
 showDoubleEnc(pow(2.0, -1022), "Min normal positive double")
 showDoubleEnc(pow(2.0, -1022 - 52), "Min subnormal positive double")
+//======
+enum AccelerateUnaryOperation {
+    case Sqrt
+    case Ceil
+}
+ 
+enum AccelerateBinaryOperation {
+    case Add
+}
+ 
+func map(input: [Double], operation: AccelerateUnaryOperation) -> [Double] {
+    var results = [Double](count:input.count, repeatedValue:0.0)
+    let count = [Int32(input.count)]
+    switch operation {
+    case .Sqrt:
+      vvsqrt(&results, input, count)
+    case .Ceil:
+        vvceil(&results, input, count)
+    }
+    
+    return results
+}
+ 
+func zipWith(left: [Double], right: [Double], operation: AccelerateBinaryOperation) -> [Double] {
+    assert(left.count == right.count, "Expected arrays of the same length, instead got arrays of two different lengths")
+    var results = [Double](count:left.count, repeatedValue:0.0)
+    let count = UInt(left.count)
+    switch operation {
+    case .Add:
+        vDSP_vaddD(left, 1, right, 1, &results, 1, count)
+    }
+    return results
+}
+ 
+println(map([4.0, 3.0, 16.0],.Sqrt))
+println(zipWith([4.0, 3.0, 16.0], [4.0, 3.0, 16.0], .Add))
+
+// Swift сам заворачивает value в Optional
+func pure<A>(value: A) -> A? {
+    return value
+}
+var s = pure(3)
 
 
 
